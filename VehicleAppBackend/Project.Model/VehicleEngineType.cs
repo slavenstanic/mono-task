@@ -7,4 +7,6 @@ public class VehicleEngineType : IVehicleEngineType
     public int Id { get; set; }
     public string Type { get; set; }
     public string Abrv { get; set; }
+    
+    public virtual ICollection<VehicleModel> VehicleModels { get; set; }
 }

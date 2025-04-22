@@ -8,4 +8,6 @@ public class VehicleOwner : IVehicleOwner
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public int DOB { get; set; }
+    
+    public virtual ICollection<VehicleRegistration> VehicleRegistrations { get; set; }
 }
