@@ -17,15 +17,6 @@ public class VehicleOwnerRepository : IVehicleOwnerRepository
 
     public async Task<List<IVehicleOwner>> GetAllAsync()
     {
-        return await _context.VehicleOwners
-            .Select(m => new VehicleOwner
-            {
-                Id = m.Id,
-                FirstName = m.FirstName,
-                LastName = m.LastName,
-                DOB = m.DOB,
-            })
-            .Cast<IVehicleOwner>()
-            .ToListAsync();
+        return await _context.VehicleOwners.ToListAsync<IVehicleOwner>();
     }
 }

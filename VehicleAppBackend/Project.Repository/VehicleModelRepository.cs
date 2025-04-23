@@ -17,17 +17,7 @@ public class VehicleModelRepository : IVehicleModelRepository
 
     public async Task<List<IVehicleModel>> GetAllAsync()
     {
-        return await _context.VehicleModels
-            .Select(m => new VehicleModel
-            {
-                Id = m.Id,
-                Name = m.Name,
-                Abrv = m.Abrv,
-                VehicleMakeId = m.VehicleMakeId,
-                VehicleEngineTypeId = m.VehicleEngineTypeId 
-            })
-            .Cast<IVehicleModel>()
-            .ToListAsync();
+        return await _context.VehicleModels.ToListAsync<IVehicleModel>();
     }
 
 }

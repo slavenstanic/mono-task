@@ -17,15 +17,6 @@ public class VehicleRegistrationRepository : IVehicleRegistrationRepository
 
     public async Task<List<IVehicleRegistration>> GetAllAsync()
     {
-        return await _context.VehicleRegistrations
-            .Select(m => new VehicleRegistration
-            {
-                Id = m.Id,
-                RegistrationNumber = m.RegistrationNumber,
-                VehicleModelId = m.VehicleModelId,
-                VehicleOwnerId = m.VehicleOwnerId,
-            })
-            .Cast<IVehicleRegistration>()
-            .ToListAsync();
+        return await _context.VehicleRegistrations.ToListAsync<IVehicleRegistration>();
     }
 }
