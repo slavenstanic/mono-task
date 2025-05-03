@@ -8,7 +8,7 @@ public class VehicleEngineType : IVehicleEngineType
     public int Id { get; set; }
     [Required]
     [StringLength(30)]
-    public string Type { get; set; } // mozda dodati [StringLength()] -> na svim potrebnim mjestima (Type, Abrv, Name, FirstName, LastName)
+    public string Type { get; set; }
     [Required]
     [StringLength(10)]
     public string Abrv { get; set; }
