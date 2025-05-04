@@ -18,6 +18,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     
     public async Task<List<T>> GetAllAsync() => await _dbSet.ToListAsync();
     
+    public async Task<List<T>> GetPagedAsync(int pageNumber, int pageSize)
+    {
+        return await _dbSet.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+    }
+    
     public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
     public async Task<int> InsertAsync(T entity)
