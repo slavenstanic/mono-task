@@ -4,7 +4,7 @@ using Project.Repository.Common;
 
 namespace Project.Repository;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly ProjectDbContext _context;
 
@@ -30,4 +30,9 @@ public class UnitOfWork : IUnitOfWork
     public IVehicleRegistrationRepository VehicleRegistrations => _vehicleRegistrations ??= new VehicleRegistrationRepository(_context);
 
     public async Task SaveAsync() => await _context.SaveChangesAsync();
+    
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
 }
