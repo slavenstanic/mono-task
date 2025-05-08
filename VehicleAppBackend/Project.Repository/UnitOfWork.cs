@@ -12,12 +12,22 @@ public class UnitOfWork : IUnitOfWork
     {
         _context = context;
     }
-
-    public IVehicleEngineTypeRepository VehicleEngineTypes => new VehicleEngineTypeRepository(_context);
-    public IVehicleMakeRepository VehicleMakes => new VehicleMakeRepository(_context);
-    public IVehicleModelRepository VehicleModels => new VehicleModelRepository(_context);
-    public IVehicleOwnerRepository VehicleOwners => new VehicleOwnerRepository(_context);
-    public IVehicleRegistrationRepository VehicleRegistrations => new VehicleRegistrationRepository(_context);
+    
+    private IVehicleEngineTypeRepository _vehicleEngineTypes;
+    
+    private IVehicleMakeRepository _vehicleMakes;
+    
+    private IVehicleModelRepository _vehicleModels;
+    
+    private IVehicleOwnerRepository _vehicleOwners;
+    
+    private IVehicleRegistrationRepository _vehicleRegistrations;
+    
+    public IVehicleEngineTypeRepository VehicleEngineTypes => _vehicleEngineTypes ??= new VehicleEngineTypeRepository(_context);
+    public IVehicleMakeRepository VehicleMakes => _vehicleMakes ??= new VehicleMakeRepository(_context);
+    public IVehicleModelRepository VehicleModels => _vehicleModels ??= new VehicleModelRepository(_context);
+    public IVehicleOwnerRepository VehicleOwners => _vehicleOwners ??= new VehicleOwnerRepository(_context);
+    public IVehicleRegistrationRepository VehicleRegistrations => _vehicleRegistrations ??= new VehicleRegistrationRepository(_context);
 
     public async Task SaveAsync() => await _context.SaveChangesAsync();
 }
