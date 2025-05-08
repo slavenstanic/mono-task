@@ -1,8 +1,6 @@
+using Project.Model;
 using Project.Model.Common;
 
 namespace Project.Repository.Common;
 
-public interface IVehicleEngineTypeRepository
-{
-    Task<List<IVehicleEngineType>> GetAllAsync();
-}
+public interface IVehicleEngineTypeRepository : IGenericRepository<VehicleEngineType> { }
