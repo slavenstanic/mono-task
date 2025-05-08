@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Project.DAL;
+using Project.Model;
 using Project.Repository.Common;
 
 namespace Project.Repository;
@@ -18,9 +19,16 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     
     public async Task<List<T>> GetAllAsync() => await _dbSet.ToListAsync();
     
-    public async Task<List<T>> GetPagedAsync(int pageNumber, int pageSize)
+    public async Task<PagedList<T>> GetPagedAsync(int pageNumber, int pageSize)
     {
-        return await _dbSet.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var totalCount = await _dbSet.CountAsync();
+
+        var items = await _dbSet
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedList<T>(items, totalCount, pageNumber, pageSize);
     }
     
     public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
