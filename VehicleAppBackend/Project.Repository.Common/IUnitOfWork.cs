@@ -10,5 +10,5 @@ public interface IUnitOfWork
     IVehicleOwnerRepository VehicleOwners { get; }
     IVehicleRegistrationRepository VehicleRegistrations { get; }
 
-    Task SaveAsync();
+    Task<int> SaveAsync();
 }

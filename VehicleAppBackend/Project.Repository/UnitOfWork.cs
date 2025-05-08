@@ -29,7 +29,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public IVehicleOwnerRepository VehicleOwners => _vehicleOwners ??= new VehicleOwnerRepository(_context);
     public IVehicleRegistrationRepository VehicleRegistrations => _vehicleRegistrations ??= new VehicleRegistrationRepository(_context);
 
-    public async Task SaveAsync() => await _context.SaveChangesAsync();
+    public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
     
     public void Dispose()
     {
