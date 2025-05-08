@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Project.DAL;
 using Project.Model;
@@ -52,5 +53,21 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         if (entity == null) return 0;
         _dbSet.Remove(entity);
         return await _context.SaveChangesAsync();
+    }
+    
+    public async Task<List<T>> GetFilteredAsync(
+        Expression<Func<T, bool>>? filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
+    )
+    {
+        IQueryable<T> query = _dbSet;
+
+        if (filter != null)
+            query = query.Where(filter);
+
+        if (orderBy != null)
+            query = orderBy(query);
+
+        return await query.ToListAsync();
     }
 }
