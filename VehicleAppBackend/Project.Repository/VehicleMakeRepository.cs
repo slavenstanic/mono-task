@@ -24,7 +24,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         };
 
         _context.VehicleMakes.Add(model);
-        return await _context.SaveChangesAsync();
+        return 0;
     }
     
     public async Task<List<IVehicleMake>> GetAllAsync()
@@ -40,7 +40,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         existing.Name = entity.Name;
         existing.Abrv = entity.Abrv;
 
-        return await _context.SaveChangesAsync();
+        return 0;
     }
     
     public async Task<int> DeleteAsync(int id)
@@ -49,6 +49,6 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         if (entity == null) return 0;
 
         _context.VehicleMakes.Remove(entity);
-        return await _context.SaveChangesAsync();
+        return 0;
     }
 }

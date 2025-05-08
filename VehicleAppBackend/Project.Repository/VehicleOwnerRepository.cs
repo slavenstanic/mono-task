@@ -25,7 +25,7 @@ public class VehicleOwnerRepository : IVehicleOwnerRepository
         };
 
         _context.VehicleOwners.Add(model);
-        return await _context.SaveChangesAsync();
+        return 0;
     }
     
     public async Task<List<IVehicleOwner>> GetAllAsync()
@@ -42,7 +42,7 @@ public class VehicleOwnerRepository : IVehicleOwnerRepository
         existing.LastName = entity.LastName;
         existing.DOB = entity.DOB;
 
-        return await _context.SaveChangesAsync();
+        return 0;
     }
     
     public async Task<int> DeleteAsync(int id)
@@ -51,6 +51,6 @@ public class VehicleOwnerRepository : IVehicleOwnerRepository
         if (entity == null) return 0;
 
         _context.VehicleOwners.Remove(entity);
-        return await _context.SaveChangesAsync();
+        return 0;
     }
 }

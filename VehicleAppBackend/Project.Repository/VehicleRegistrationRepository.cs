@@ -25,7 +25,7 @@ public class VehicleRegistrationRepository : IVehicleRegistrationRepository
         };
 
         _context.VehicleRegistrations.Add(model);
-        return await _context.SaveChangesAsync();
+        return 0;
     }
     
     public async Task<List<IVehicleRegistration>> GetAllAsync()
@@ -42,7 +42,7 @@ public class VehicleRegistrationRepository : IVehicleRegistrationRepository
         existing.VehicleModelId = entity.VehicleModelId;
         existing.VehicleOwnerId = entity.VehicleOwnerId;
 
-        return await _context.SaveChangesAsync();
+        return 0;
     }
     
     public async Task<int> DeleteAsync(int id)
@@ -51,6 +51,6 @@ public class VehicleRegistrationRepository : IVehicleRegistrationRepository
         if (entity == null) return 0;
 
         _context.VehicleRegistrations.Remove(entity);
-        return await _context.SaveChangesAsync();
+        return 0;
     }
 }
