@@ -21,8 +21,7 @@ public class VehicleMakeController : ControllerBase
         var result = await _unitOfWork.VehicleMakes.GetAllAsync();
         return Ok(result);
     }
-
-    [HttpGet("{id}")]
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -40,15 +39,14 @@ public class VehicleMakeController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] VehicleMake updated)
+    public async Task<IActionResult> Update(int id, [FromBody] VehicleMake make)
     {
-        var existing = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
-        if (existing == null) return NotFound();
+        if (id != make.Id) return BadRequest();
 
-        updated.Id = id;
-        await _unitOfWork.VehicleMakes.UpdateAsync(updated);
+        var success = await _unitOfWork.VehicleMakes.UpdateAsync(make);
         var saved = await _unitOfWork.SaveAsync();
-        return saved > 0 ? Ok() : BadRequest();
+
+        return success > 0 && saved > 0 ? Ok() : NotFound();
     }
 
     [HttpDelete("{id}")]
@@ -61,4 +59,12 @@ public class VehicleMakeController : ControllerBase
         var saved = await _unitOfWork.SaveAsync();
         return saved > 0 ? Ok() : BadRequest();
     }
+    
+    [HttpGet("paged")]
+    public async Task<IActionResult> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
+    {
+        var result = await _unitOfWork.VehicleMakes.GetPagedAsync(page, pageSize);
+        return Ok(result);
+    }
+
 }
