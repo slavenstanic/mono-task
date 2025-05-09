@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Project.Model.Common;
 
 namespace Project.Model;
@@ -12,6 +13,6 @@ public class VehicleMake : IVehicleMake
     [Required]
     [StringLength(10)]
     public string Abrv { get; set; }
-    
-    public virtual ICollection<VehicleModel> VehicleModels { get; set; }
+    [JsonIgnore]
+    public virtual ICollection<VehicleModel>? VehicleModels { get; set; }
 }

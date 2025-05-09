@@ -1,0 +1,14 @@
+vehicle-app-frontend/logs
+vehicle-app-frontend/*.log
+vehicle-app-frontend/npm-debug.log*
+
+**/node_modules
+**/dist
+
+**/.idea
+**/.DS_Store
+
+VehicleAppBackend/Project.API/project.db
+
+VehicleAppBackend/*/bin
+VehicleAppBackend/*/obj
