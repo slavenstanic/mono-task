@@ -48,6 +48,19 @@ class VehicleMakeStore {
         }
     };
 
+    updateVehicleMake = async (make: VehicleMake) => {
+        try {
+            await API.put(`/vehiclemake/${make.id}`, make);
+            runInAction(() => {
+                const index = this.vehicleMakes.findIndex(m => m.id === make.id);
+                if (index !== -1) this.vehicleMakes[index] = make;
+            });
+        } catch (error) {
+            console.error('Failed to update vehicle make:', error);
+        }
+    };
+
+
 }
 
 const vehicleMakeStore = new VehicleMakeStore();
