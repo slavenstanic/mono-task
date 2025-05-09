@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import API from '../api/agent';
 import type {VehicleMake} from '../models/vehicleMake';
 
-export default class VehicleMakeStore {
+class VehicleMakeStore {
     vehicleMakes: VehicleMake[] = [];
     loading: boolean = false;
 
@@ -25,4 +25,18 @@ export default class VehicleMakeStore {
             });
         }
     };
+
+    createVehicleMake = async (make: Omit<VehicleMake, 'id'>) => {
+        try {
+            const response = await API.post<VehicleMake>('/vehiclemake', make);
+            runInAction(() => {
+                this.vehicleMakes.push(response.data);
+            });
+        } catch (error) {
+            console.error('Failed to create vehicle make:', error);
+        }
+    };
 }
+
+const vehicleMakeStore = new VehicleMakeStore();
+export default vehicleMakeStore;
