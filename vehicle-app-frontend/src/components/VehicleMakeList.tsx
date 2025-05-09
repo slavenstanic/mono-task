@@ -14,6 +14,9 @@ const VehicleMakeList = () => {
             {vehicleMakeStore.vehicleMakes.map(make => (
                 <li key={make.id}>
                     {make.name} ({make.abrv})
+                    <button onClick={() => vehicleMakeStore.deleteVehicleMake(make.id)}>
+                        Delete
+                    </button>
                 </li>
             ))}
         </ul>

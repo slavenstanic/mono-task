@@ -36,6 +36,18 @@ class VehicleMakeStore {
             console.error('Failed to create vehicle make:', error);
         }
     };
+
+    deleteVehicleMake = async (id: number) => {
+        try {
+            await API.delete(`/vehiclemake/${id}`);
+            runInAction(() => {
+                this.vehicleMakes = this.vehicleMakes.filter(m => m.id !== id);
+            });
+        } catch (error) {
+            console.error('Failed to delete vehicle make:', error);
+        }
+    };
+
 }
 
 const vehicleMakeStore = new VehicleMakeStore();
