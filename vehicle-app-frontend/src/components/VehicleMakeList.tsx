@@ -35,34 +35,56 @@ const VehicleMakeList = () => {
     if (vehicleMakeStore.loading) return <p>Loading...</p>;
 
     return (
-        <ul>
-            {vehicleMakeStore.vehicleMakes.map(make => (
-                <li key={make.id}>
-                    {editId === make.id ? (
-                        <>
-                            <input
-                                name="name"
-                                value={form.name}
-                                onChange={handleChange}
-                            />
-                            <input
-                                name="abrv"
-                                value={form.abrv}
-                                onChange={handleChange}
-                            />
-                            <button onClick={saveEdit}>Save</button>
-                            <button onClick={cancelEdit}>Cancel</button>
-                        </>
-                    ) : (
-                        <>
-                            {make.name} ({make.abrv})
-                            <button onClick={() => startEdit(make)}>Edit</button>
-                            <button onClick={() => vehicleMakeStore.deleteVehicleMake(make.id)}>Delete</button>
-                        </>
-                    )}
-                </li>
-            ))}
-        </ul>
+        <>
+            <ul>
+                {vehicleMakeStore.vehicleMakes.map(make => (
+                    <li key={make.id}>
+                        {editId === make.id ? (
+                            <>
+                                <input
+                                    name="name"
+                                    value={form.name}
+                                    onChange={handleChange}
+                                />
+                                <input
+                                    name="abrv"
+                                    value={form.abrv}
+                                    onChange={handleChange}
+                                />
+                                <button onClick={saveEdit}>Save</button>
+                                <button onClick={cancelEdit}>Cancel</button>
+                            </>
+                        ) : (
+                            <>
+                                {make.name} ({make.abrv})
+                                <button onClick={() => startEdit(make)}>Edit</button>
+                                <button onClick={() => vehicleMakeStore.deleteVehicleMake(make.id)}>Delete</button>
+                            </>
+                        )}
+                    </li>
+                ))}
+            </ul>
+
+            <div style={{ marginTop: '1rem' }}>
+                <button
+                    onClick={() => vehicleMakeStore.setPage(vehicleMakeStore.page - 1)}
+                    disabled={vehicleMakeStore.page === 1}
+                >
+                    Previous
+                </button>
+
+                <span style={{ margin: '0 1rem' }}>
+          Page {vehicleMakeStore.page} of {vehicleMakeStore.totalPages}
+        </span>
+
+                <button
+                    onClick={() => vehicleMakeStore.setPage(vehicleMakeStore.page + 1)}
+                    disabled={vehicleMakeStore.page === vehicleMakeStore.totalPages}
+                >
+                    Next
+                </button>
+            </div>
+        </>
     );
 };
 
