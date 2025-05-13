@@ -20,11 +20,22 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     
     public async Task<List<T>> GetAllAsync() => await _dbSet.ToListAsync();
     
-    public async Task<PagedList<T>> GetPagedAsync(int pageNumber, int pageSize)
+    public async Task<PagedList<T>> GetFilteredPagedAsync(
+        Expression<Func<T, bool>>? filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        int pageNumber = 1,
+        int pageSize = 10)
     {
-        var totalCount = await _dbSet.CountAsync();
+        IQueryable<T> query = _dbSet;
 
-        var items = await _dbSet
+        if (filter != null)
+            query = query.Where(filter);
+
+        if (orderBy != null)
+            query = orderBy(query);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -53,21 +64,5 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         if (entity == null) return 0;
         _dbSet.Remove(entity);
         return 1;
-    }
-    
-    public async Task<List<T>> GetFilteredAsync(
-        Expression<Func<T, bool>>? filter = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
-    )
-    {
-        IQueryable<T> query = _dbSet;
-
-        if (filter != null)
-            query = query.Where(filter);
-
-        if (orderBy != null)
-            query = orderBy(query);
-
-        return await query.ToListAsync();
     }
 }

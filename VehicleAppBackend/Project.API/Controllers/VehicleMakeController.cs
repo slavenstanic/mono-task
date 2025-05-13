@@ -63,7 +63,13 @@ public class VehicleMakeController : ControllerBase
     [HttpGet("paged")]
     public async Task<IActionResult> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
     {
-        var result = await _unitOfWork.VehicleMakes.GetPagedAsync(page, pageSize);
+        var result = await _unitOfWork.VehicleMakes.GetFilteredPagedAsync(
+            filter: null,
+            orderBy: q => q.OrderBy(x => x.Name),
+            pageNumber: page,
+            pageSize: pageSize
+        );
+
         return Ok(result);
     }
 
