@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
+builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
 builder.Services.AddDbContext<ProjectDbContext>(options =>
     options.UseSqlite("Data Source=project.db"));
 
