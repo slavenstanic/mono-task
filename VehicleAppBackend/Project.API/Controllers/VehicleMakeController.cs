@@ -16,9 +16,15 @@ public class VehicleMakeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _unitOfWork.VehicleMakes.GetAllAsync();
+        var result = await _unitOfWork.VehicleMakes.GetFilteredPagedAsync(
+            filter: null,
+            orderBy: q => q.OrderBy(x => x.Name),
+            pageNumber: page,
+            pageSize: pageSize
+        );
+
         return Ok(result);
     }
     
