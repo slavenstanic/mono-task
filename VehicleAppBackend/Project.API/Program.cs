@@ -2,12 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using Project.DAL;
 using Project.Repository;
 using Project.Repository.Common;
+using Project.Service;
+using Project.Service.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
 builder.Services.AddDbContext<ProjectDbContext>(options =>
     options.UseSqlite("Data Source=project.db"));
 
