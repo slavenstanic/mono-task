@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { Button, styled, TextField, Typography } from "@mui/material";
+import { Button, styled, Typography } from "@mui/material";
 import vehicleListStore from "../stores/vehicleListStore";
 import vehicleEditStore from "../stores/vehicleEditStore";
 import {
   deleteVehicleMake,
   updateVehicleMake as updateVehicleMakeAPI,
 } from "../services/vehicleMakeService";
+import FormField from "./FormField";
 
 const Root = styled("div")(() => ({
   display: "flex",
@@ -46,7 +47,8 @@ const VehicleMakeList = () => {
   const { vehicleMakes, page, totalPages, loading, setPage, loadVehicleMakes } =
     vehicleListStore;
 
-  const { form, editId, setForm, resetForm, setEditId } = vehicleEditStore;
+  const { form, editId, setForm, setFormValues, resetForm, setEditId } =
+    vehicleEditStore;
 
   useEffect(() => {
     loadVehicleMakes();
@@ -54,7 +56,7 @@ const VehicleMakeList = () => {
 
   const startEdit = (id: number, name: string, abrv: string) => {
     setEditId(id);
-    setForm(name, abrv);
+    setFormValues({ name, abrv });
   };
 
   const cancelEdit = () => {
@@ -78,41 +80,15 @@ const VehicleMakeList = () => {
           {editId === make.id ? (
             <>
               <TextFieldContainer>
-                <TextField
+                <FormField
                   name="name"
                   value={form.name}
                   onChange={(e) => setForm(e.target.name, e.target.value)}
-                  sx={{
-                    width: "100%",
-                    backgroundColor: "#092E49",
-                    border: "2px solid #5798C7",
-                    borderRadius: "0.5rem",
-                    input: {
-                      color: "#fff",
-                      fontSize: "0.875rem",
-                      lineHeight: "1.125rem",
-                      padding: "0.5rem 0.5rem 0.5rem 1rem",
-                    },
-                    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-                  }}
                 />
-                <TextField
+                <FormField
                   name="abrv"
                   value={form.abrv}
                   onChange={(e) => setForm(e.target.name, e.target.value)}
-                  sx={{
-                    width: "100%",
-                    backgroundColor: "#092E49",
-                    border: "2px solid #5798C7",
-                    borderRadius: "0.5rem",
-                    input: {
-                      color: "#fff",
-                      fontSize: "0.875rem",
-                      lineHeight: "1.125rem",
-                      padding: "0.5rem 0.5rem 0.5rem 1rem",
-                    },
-                    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-                  }}
                 />
               </TextFieldContainer>
               <ButtonContainer>
@@ -127,12 +103,8 @@ const VehicleMakeList = () => {
                     textTransform: "capitalize",
                     padding: "0.5rem 0.75rem",
                     borderRadius: "0.5rem",
-                    "&:hover": {
-                      backgroundColor: "#5798C7",
-                    },
-                    "&:active": {
-                      backgroundColor: "#7DAFD3",
-                    },
+                    "&:hover": { backgroundColor: "#5798C7" },
+                    "&:active": { backgroundColor: "#7DAFD3" },
                   }}
                   onClick={saveEdit}
                 >
@@ -149,12 +121,8 @@ const VehicleMakeList = () => {
                     textTransform: "capitalize",
                     padding: "0.5rem 0.75rem",
                     borderRadius: "0.5rem",
-                    "&:hover": {
-                      backgroundColor: "#5798C7",
-                    },
-                    "&:active": {
-                      backgroundColor: "#7DAFD3",
-                    },
+                    "&:hover": { backgroundColor: "#5798C7" },
+                    "&:active": { backgroundColor: "#7DAFD3" },
                   }}
                   onClick={cancelEdit}
                 >
@@ -179,12 +147,8 @@ const VehicleMakeList = () => {
                     textTransform: "capitalize",
                     padding: "0.5rem 0.75rem",
                     borderRadius: "0.5rem",
-                    "&:hover": {
-                      backgroundColor: "#5798C7",
-                    },
-                    "&:active": {
-                      backgroundColor: "#7DAFD3",
-                    },
+                    "&:hover": { backgroundColor: "#5798C7" },
+                    "&:active": { backgroundColor: "#7DAFD3" },
                   }}
                   onClick={() => startEdit(make.id, make.name, make.abrv)}
                 >
@@ -201,12 +165,8 @@ const VehicleMakeList = () => {
                     textTransform: "capitalize",
                     padding: "0.5rem 0.75rem",
                     borderRadius: "0.5rem",
-                    "&:hover": {
-                      backgroundColor: "#5798C7",
-                    },
-                    "&:active": {
-                      backgroundColor: "#7DAFD3",
-                    },
+                    "&:hover": { backgroundColor: "#5798C7" },
+                    "&:active": { backgroundColor: "#7DAFD3" },
                   }}
                   onClick={async () => {
                     await deleteVehicleMake(make.id);
