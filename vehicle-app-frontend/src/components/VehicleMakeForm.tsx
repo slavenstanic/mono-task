@@ -1,7 +1,8 @@
-import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import vehicleMakeStore from "../stores/vehicleMakeStore";
 import { Button, styled, TextField, Typography } from "@mui/material";
+import vehicleEditStore from "../stores/vehicleEditStore";
+import { createVehicleMake } from "../services/vehicleMakeService";
+import vehicleListStore from "../stores/vehicleListStore";
 
 const Root = styled("div")(() => ({
   display: "flex",
@@ -16,17 +17,18 @@ const InputContainer = styled("div")(() => ({
 }));
 
 const VehicleMakeForm = () => {
-  const [form, setForm] = useState({ name: "", abrv: "" });
+  const { form, setForm, resetForm } = vehicleEditStore;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm(e.target.name, e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.name && form.abrv) {
-      vehicleMakeStore.createVehicleMake(form);
-      setForm({ name: "", abrv: "" });
+      await createVehicleMake({ name: form.name, abrv: form.abrv });
+      await vehicleListStore.loadVehicleMakes();
+      resetForm();
     }
   };
 
@@ -45,29 +47,10 @@ const VehicleMakeForm = () => {
       <form onSubmit={handleSubmit}>
         <InputContainer>
           <TextField
-            sx={{
-              borderRadius: "0.25rem",
-              width: "100%",
-              backgroundColor: "#092E49",
-              input: {
-                color: "#fff",
-                padding: "0.5rem 0.5rem 0.5rem 1rem",
-                fontSize: "0.875rem",
-                lineHeight: "1.125rem",
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
-              "&:focus-within .MuiOutlinedInput-notchedOutline": {
-                border: "2px solid #5798C7",
-              },
-            }}
             name="name"
             value={form.name}
             onChange={handleChange}
             placeholder="Name:"
-          />
-          <TextField
             sx={{
               borderRadius: "0.25rem",
               width: "100%",
@@ -78,19 +61,36 @@ const VehicleMakeForm = () => {
                 fontSize: "0.875rem",
                 lineHeight: "1.125rem",
               },
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
+              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
               "&:focus-within .MuiOutlinedInput-notchedOutline": {
                 border: "2px solid #5798C7",
               },
             }}
+          />
+          <TextField
             name="abrv"
             value={form.abrv}
             onChange={handleChange}
             placeholder="Abbreviation:"
+            sx={{
+              borderRadius: "0.25rem",
+              width: "100%",
+              backgroundColor: "#092E49",
+              input: {
+                color: "#fff",
+                padding: "0.5rem 0.5rem 0.5rem 1rem",
+                fontSize: "0.875rem",
+                lineHeight: "1.125rem",
+              },
+              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+              "&:focus-within .MuiOutlinedInput-notchedOutline": {
+                border: "2px solid #5798C7",
+              },
+            }}
           />
           <Button
+            type="submit"
+            disabled={!form.name.trim() || !form.abrv.trim()}
             sx={{
               width: "12.5rem",
               backgroundColor: "#275B80",
@@ -102,19 +102,13 @@ const VehicleMakeForm = () => {
               textTransform: "capitalize",
               padding: "0.5rem 0.75rem",
               borderRadius: "0.5rem",
-              "&:hover": {
-                backgroundColor: "#5798C7",
-              },
-              "&:active": {
-                backgroundColor: "#7DAFD3",
-              },
+              "&:hover": { backgroundColor: "#5798C7" },
+              "&:active": { backgroundColor: "#7DAFD3" },
               "&.Mui-disabled": {
                 backgroundColor: "rgba(39, 91, 128, 0.3)",
                 color: "rgba(255, 255, 255, 0.3)",
               },
             }}
-            type="submit"
-            disabled={!form.name.trim() || !form.abrv.trim()}
           >
             Add Vehicle
           </Button>
