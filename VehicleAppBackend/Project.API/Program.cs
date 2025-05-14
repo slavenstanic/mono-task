@@ -14,6 +14,7 @@ builder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
 builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
 builder.Services.AddScoped<IVehicleEngineTypeService, VehicleEngineTypeService>();
 builder.Services.AddScoped<IVehicleOwnerService, VehicleOwnerService>();
+builder.Services.AddScoped<IVehicleRegistrationService, VehicleRegistrationService>();
 builder.Services.AddDbContext<ProjectDbContext>(options =>
     options.UseSqlite("Data Source=project.db"));
 
