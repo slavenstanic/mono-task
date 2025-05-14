@@ -1,14 +1,12 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
-import API from "../api/agent";
 import type { VehicleMake } from "../models/vehicleMake";
 
-interface PagedResult<T> {
-  items: T[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-}
+import {
+  getVehicleMakes,
+  createVehicleMake,
+  updateVehicleMake,
+  deleteVehicleMake,
+} from "../services/vehicleMakeService";
 
 class VehicleMakeStore {
   vehicleMakes: VehicleMake[] = [];
@@ -35,12 +33,10 @@ class VehicleMakeStore {
   loadVehicleMakes = async () => {
     this.loading = true;
     try {
-      const response = await API.get<PagedResult<VehicleMake>>(
-        `/vehiclemake?page=${this.page}&pageSize=${this.pageSize}`,
-      );
+      const data = await getVehicleMakes(this.page, this.pageSize);
       runInAction(() => {
-        this.vehicleMakes = response.data.items;
-        this.totalPages = response.data.totalPages;
+        this.vehicleMakes = data.items;
+        this.totalPages = data.totalPages;
       });
     } catch (error) {
       console.error("Failed to load vehicle makes:", error);
@@ -60,7 +56,7 @@ class VehicleMakeStore {
 
   createVehicleMake = async (make: Omit<VehicleMake, "id">) => {
     try {
-      await API.post<VehicleMake>("/vehiclemake", make);
+      await createVehicleMake(make);
       runInAction(() => {
         this.loadVehicleMakes();
       });
@@ -71,8 +67,8 @@ class VehicleMakeStore {
 
   deleteVehicleMake = async (id: number) => {
     try {
-      const response = await API.delete(`/vehiclemake/${id}`);
-      if (response.status === 200) {
+      const status = await deleteVehicleMake(id);
+      if (status === 200) {
         this.loadVehicleMakes();
       }
     } catch (error) {
@@ -82,8 +78,8 @@ class VehicleMakeStore {
 
   updateVehicleMake = async (make: VehicleMake) => {
     try {
-      const response = await API.put(`/vehiclemake/${make.id}`, make);
-      if (response.status === 200) {
+      const status = await updateVehicleMake(make);
+      if (status === 200) {
         runInAction(() => {
           const index = this.vehicleMakes.findIndex((m) => m.id === make.id);
           if (index !== -1) this.vehicleMakes[index] = make;
