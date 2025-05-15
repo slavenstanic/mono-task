@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Project.Model;
-using Project.Repository.Common;
+using Project.Service.Common;
+using Project.Model.DTO;
 
 namespace Project.API.Controllers;
 
@@ -8,63 +8,45 @@ namespace Project.API.Controllers;
 [Route("api/[controller]")]
 public class VehicleMakeController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVehicleMakeService _service;
 
-    public VehicleMakeController(IUnitOfWork unitOfWork)
+    public VehicleMakeController(IVehicleMakeService service)
     {
-        _unitOfWork = unitOfWork;
+        _service = service;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _unitOfWork.VehicleMakes.GetAllAsync();
+        var result = await _service.GetAllAsync(page, pageSize);
         return Ok(result);
     }
-    
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
+        var result = await _service.GetByIdAsync(id);
         return result != null ? Ok(result) : NotFound();
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] VehicleMake make)
+    public async Task<IActionResult> Create([FromBody] VehicleMakeDTO dto)
     {
-        await _unitOfWork.VehicleMakes.InsertAsync(make);
-        var result = await _unitOfWork.SaveAsync();
-
-        return CreatedAtAction(nameof(GetById), new { id = make.Id }, make);
+        var created = await _service.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] VehicleMake make)
+    public async Task<IActionResult> Update(int id, [FromBody] VehicleMakeDTO dto)
     {
-        if (id != make.Id) return BadRequest();
-
-        var success = await _unitOfWork.VehicleMakes.UpdateAsync(make);
-        var saved = await _unitOfWork.SaveAsync();
-
-        return success > 0 && saved > 0 ? Ok() : NotFound();
+        var success = await _service.UpdateAsync(id, dto);
+        return success ? Ok() : NotFound();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var existing = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
-        if (existing == null) return NotFound();
-
-        await _unitOfWork.VehicleMakes.DeleteAsync(id);
-        var saved = await _unitOfWork.SaveAsync();
-        return saved > 0 ? Ok() : BadRequest();
+        var success = await _service.DeleteAsync(id);
+        return success ? Ok() : NotFound();
     }
-    
-    [HttpGet("paged")]
-    public async Task<IActionResult> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
-    {
-        var result = await _unitOfWork.VehicleMakes.GetPagedAsync(page, pageSize);
-        return Ok(result);
-    }
-
 }
