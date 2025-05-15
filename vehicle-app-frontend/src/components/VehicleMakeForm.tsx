@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Button, styled, TextField, Typography } from "@mui/material";
-import vehicleEditStore from "../stores/vehicleEditStore";
 import { createVehicleMake } from "../services/vehicleMakeService";
 import vehicleListStore from "../stores/vehicleListStore";
 
@@ -17,10 +17,10 @@ const InputContainer = styled("div")(() => ({
 }));
 
 const VehicleMakeForm = () => {
-  const { form, setForm, resetForm } = vehicleEditStore;
+  const [form, setForm] = useState({ name: "", abrv: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm(e.target.name, e.target.value);
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +28,7 @@ const VehicleMakeForm = () => {
     if (form.name && form.abrv) {
       await createVehicleMake({ name: form.name, abrv: form.abrv });
       await vehicleListStore.loadVehicleMakes();
-      resetForm();
+      setForm({ name: "", abrv: "" });
     }
   };
 

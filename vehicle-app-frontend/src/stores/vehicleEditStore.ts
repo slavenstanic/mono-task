@@ -14,8 +14,12 @@ class VehicleEditStore {
     });
   }
 
-  setForm = (name: string, abrv: string) => {
-    this.form = { name, abrv };
+  setForm = (field: string, value: string) => {
+    this.form = { ...this.form, [field]: value };
+  };
+
+  setFormValues = (values: { name: string; abrv: string }) => {
+    this.form = values;
   };
 
   resetForm = () => {
