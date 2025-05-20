@@ -16,53 +16,99 @@ public class VehicleMakeService : IVehicleMakeService
 
     public async Task<PagedList<VehicleMakeDTO>> GetAllAsync(int page, int pageSize)
     {
-        var paged = await _unitOfWork.VehicleMakes.GetFilteredPagedAsync(
-            null, q => q.OrderBy(x => x.Name), page, pageSize
-        );
+        try
+        {
+            var paged = await _unitOfWork.VehicleMakes.GetFilteredPagedAsync(
+                null, q => q.OrderBy(x => x.Name), page, pageSize
+            );
 
-        return new PagedList<VehicleMakeDTO>(
-            paged.Items.Select(m => new VehicleMakeDTO { Id = m.Id, Name = m.Name, Abrv = m.Abrv }).ToList(),
-            paged.TotalCount,
-            paged.PageNumber,
-            paged.PageSize
-        );
+            return new PagedList<VehicleMakeDTO>(
+                paged.Items.Select(m => new VehicleMakeDTO { Id = m.Id, Name = m.Name, Abrv = m.Abrv }).ToList(),
+                paged.TotalCount,
+                paged.PageNumber,
+                paged.PageSize
+            );
+        }
+
+        catch (Exception)
+        {
+            throw;
+        }
+
     }
 
     public async Task<VehicleMakeDTO?> GetByIdAsync(int id)
     {
-        var entity = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
-        return entity == null ? null : new VehicleMakeDTO { Id = entity.Id, Name = entity.Name, Abrv = entity.Abrv };
+        try
+        {
+            var entity = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
+            return entity == null
+                ? null
+                : new VehicleMakeDTO { Id = entity.Id, Name = entity.Name, Abrv = entity.Abrv };
+        }
+
+        catch (Exception)
+        {
+            throw;
+        }
+
     }
 
     public async Task<VehicleMakeDTO> CreateAsync(VehicleMakeDTO dto)
     {
-        var entity = new VehicleMake { Name = dto.Name, Abrv = dto.Abrv };
-        await _unitOfWork.VehicleMakes.InsertAsync(entity);
-        await _unitOfWork.SaveAsync();
-        dto.Id = entity.Id;
-        return dto;
+        try
+        {
+            var entity = new VehicleMake { Name = dto.Name, Abrv = dto.Abrv };
+            await _unitOfWork.VehicleMakes.InsertAsync(entity);
+            await _unitOfWork.SaveAsync();
+            dto.Id = entity.Id;
+            return dto;
+        }
+        
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<bool> UpdateAsync(int id, VehicleMakeDTO dto)
     {
-        var existing = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
-        if (existing == null) return false;
+        try
+        {
+            var existing = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
+            if (existing == null) return false;
 
-        existing.Name = dto.Name;
-        existing.Abrv = dto.Abrv;
+            existing.Name = dto.Name;
+            existing.Abrv = dto.Abrv;
 
-        await _unitOfWork.VehicleMakes.UpdateAsync(existing);
-        await _unitOfWork.SaveAsync();
-        return true;
+            await _unitOfWork.VehicleMakes.UpdateAsync(existing);
+            await _unitOfWork.SaveAsync();
+            return true;
+        }
+
+        catch (Exception)
+        {
+            throw;
+        }
+
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var existing = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
-        if (existing == null) return false;
+        try
+        {
+            var existing = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
+            if (existing == null) return false;
 
-        await _unitOfWork.VehicleMakes.DeleteAsync(id);
-        await _unitOfWork.SaveAsync();
-        return true;
+            await _unitOfWork.VehicleMakes.DeleteAsync(id);
+            await _unitOfWork.SaveAsync();
+            return true;
+        }
+
+        catch (Exception)
+        {
+            throw;
+        }
+
     }
 }
