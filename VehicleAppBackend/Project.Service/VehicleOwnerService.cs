@@ -1,3 +1,4 @@
+using AutoMapper;
 using Project.Model;
 using Project.Model.DTO;
 using Project.Repository.Common;
@@ -8,10 +9,12 @@ namespace Project.Service;
 public class VehicleOwnerService : IVehicleOwnerService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public VehicleOwnerService(IUnitOfWork unitOfWork)
+    public VehicleOwnerService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<PagedList<VehicleOwnerDTO>> GetAllAsync(int page, int pageSize)
@@ -23,24 +26,16 @@ public class VehicleOwnerService : IVehicleOwnerService
             );
 
             return new PagedList<VehicleOwnerDTO>(
-                paged.Items.Select(x => new VehicleOwnerDTO
-                {
-                    Id = x.Id,
-                    FirstName = x.FirstName,
-                    LastName = x.LastName,
-                    DOB = x.DOB
-                }).ToList(),
+                _mapper.Map<List<VehicleOwnerDTO>>(paged.Items),
                 paged.TotalCount,
                 paged.PageNumber,
                 paged.PageSize
             );
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<VehicleOwnerDTO?> GetByIdAsync(int id)
@@ -48,47 +43,28 @@ public class VehicleOwnerService : IVehicleOwnerService
         try
         {
             var entity = await _unitOfWork.VehicleOwners.GetByIdAsync(id);
-            if (entity == null) return null;
-
-            return new VehicleOwnerDTO
-            {
-                Id = entity.Id,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                DOB = entity.DOB
-            };
+            return entity == null ? null : _mapper.Map<VehicleOwnerDTO>(entity);
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<VehicleOwnerDTO> CreateAsync(VehicleOwnerDTO dto)
     {
         try
         {
-            var entity = new VehicleOwner
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                DOB = dto.DOB
-            };
-
+            var entity = _mapper.Map<VehicleOwner>(dto);
             await _unitOfWork.VehicleOwners.InsertAsync(entity);
             await _unitOfWork.SaveAsync();
-
             dto.Id = entity.Id;
             return dto;
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<bool> UpdateAsync(int id, VehicleOwnerDTO dto)
@@ -98,20 +74,16 @@ public class VehicleOwnerService : IVehicleOwnerService
             var existing = await _unitOfWork.VehicleOwners.GetByIdAsync(id);
             if (existing == null) return false;
 
-            existing.FirstName = dto.FirstName;
-            existing.LastName = dto.LastName;
-            existing.DOB = dto.DOB;
+            _mapper.Map(dto, existing);
 
             await _unitOfWork.VehicleOwners.UpdateAsync(existing);
             await _unitOfWork.SaveAsync();
             return true;
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<bool> DeleteAsync(int id)
@@ -125,11 +97,9 @@ public class VehicleOwnerService : IVehicleOwnerService
             await _unitOfWork.SaveAsync();
             return true;
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 }

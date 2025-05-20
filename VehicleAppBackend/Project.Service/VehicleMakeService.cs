@@ -1,4 +1,5 @@
-﻿using Project.Model;
+﻿using AutoMapper;
+using Project.Model;
 using Project.Model.DTO;
 using Project.Repository.Common;
 using Project.Service.Common;
@@ -8,10 +9,12 @@ namespace Project.Service;
 public class VehicleMakeService : IVehicleMakeService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public VehicleMakeService(IUnitOfWork unitOfWork)
+    public VehicleMakeService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<PagedList<VehicleMakeDTO>> GetAllAsync(int page, int pageSize)
@@ -23,7 +26,7 @@ public class VehicleMakeService : IVehicleMakeService
             );
 
             return new PagedList<VehicleMakeDTO>(
-                paged.Items.Select(m => new VehicleMakeDTO { Id = m.Id, Name = m.Name, Abrv = m.Abrv }).ToList(),
+                _mapper.Map<List<VehicleMakeDTO>>(paged.Items),
                 paged.TotalCount,
                 paged.PageNumber,
                 paged.PageSize
@@ -44,9 +47,7 @@ public class VehicleMakeService : IVehicleMakeService
         try
         {
             var entity = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
-            return entity == null
-                ? null
-                : new VehicleMakeDTO { Id = entity.Id, Name = entity.Name, Abrv = entity.Abrv };
+           return entity == null ? null : _mapper.Map<VehicleMakeDTO>(entity);
         }
 
         catch (Exception)
@@ -61,7 +62,7 @@ public class VehicleMakeService : IVehicleMakeService
     {
         try
         {
-            var entity = new VehicleMake { Name = dto.Name, Abrv = dto.Abrv };
+            var entity = _mapper.Map<VehicleMake>(dto);
             await _unitOfWork.VehicleMakes.InsertAsync(entity);
             await _unitOfWork.SaveAsync();
             dto.Id = entity.Id;

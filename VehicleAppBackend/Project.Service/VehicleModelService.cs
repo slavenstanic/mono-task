@@ -1,3 +1,4 @@
+using AutoMapper;
 using Project.Model;
 using Project.Model.DTO;
 using Project.Repository.Common;
@@ -8,10 +9,12 @@ namespace Project.Service;
 public class VehicleModelService : IVehicleModelService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public VehicleModelService(IUnitOfWork unitOfWork)
+    public VehicleModelService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<PagedList<VehicleModelDTO>> GetAllAsync(int page, int pageSize)
@@ -23,25 +26,16 @@ public class VehicleModelService : IVehicleModelService
             );
 
             return new PagedList<VehicleModelDTO>(
-                paged.Items.Select(x => new VehicleModelDTO
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Abrv = x.Abrv,
-                    VehicleMakeId = x.VehicleMakeId,
-                    VehicleEngineTypeId = x.VehicleEngineTypeId
-                }).ToList(),
+                _mapper.Map<List<VehicleModelDTO>>(paged.Items),
                 paged.TotalCount,
                 paged.PageNumber,
                 paged.PageSize
             );
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<VehicleModelDTO?> GetByIdAsync(int id)
@@ -49,49 +43,28 @@ public class VehicleModelService : IVehicleModelService
         try
         {
             var entity = await _unitOfWork.VehicleModels.GetByIdAsync(id);
-            if (entity == null) return null;
-
-            return new VehicleModelDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Abrv = entity.Abrv,
-                VehicleMakeId = entity.VehicleMakeId,
-                VehicleEngineTypeId = entity.VehicleEngineTypeId
-            };
+            return entity == null ? null : _mapper.Map<VehicleModelDTO>(entity);
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<VehicleModelDTO> CreateAsync(VehicleModelDTO dto)
     {
         try
         {
-            var entity = new VehicleModel
-            {
-                Name = dto.Name,
-                Abrv = dto.Abrv,
-                VehicleMakeId = dto.VehicleMakeId,
-                VehicleEngineTypeId = dto.VehicleEngineTypeId
-            };
-
+            var entity = _mapper.Map<VehicleModel>(dto);
             await _unitOfWork.VehicleModels.InsertAsync(entity);
             await _unitOfWork.SaveAsync();
-
             dto.Id = entity.Id;
             return dto;
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<bool> UpdateAsync(int id, VehicleModelDTO dto)
@@ -101,21 +74,16 @@ public class VehicleModelService : IVehicleModelService
             var existing = await _unitOfWork.VehicleModels.GetByIdAsync(id);
             if (existing == null) return false;
 
-            existing.Name = dto.Name;
-            existing.Abrv = dto.Abrv;
-            existing.VehicleMakeId = dto.VehicleMakeId;
-            existing.VehicleEngineTypeId = dto.VehicleEngineTypeId;
+            _mapper.Map(dto, existing);
 
             await _unitOfWork.VehicleModels.UpdateAsync(existing);
             await _unitOfWork.SaveAsync();
             return true;
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 
     public async Task<bool> DeleteAsync(int id)
@@ -129,11 +97,9 @@ public class VehicleModelService : IVehicleModelService
             await _unitOfWork.SaveAsync();
             return true;
         }
-
         catch (Exception)
         {
             throw;
         }
-
     }
 }
