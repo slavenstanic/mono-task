@@ -9,6 +9,7 @@ public class VehicleEngineTypeService : IVehicleEngineTypeService
 {
     private readonly IUnitOfWork _unitOfWork;
 
+    // vidim kakvu sam glupost ovdje napravio, kasnije cu ovaj servis promijeniti u read-only te zato sad necu upravljat iznimkama
     public VehicleEngineTypeService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
