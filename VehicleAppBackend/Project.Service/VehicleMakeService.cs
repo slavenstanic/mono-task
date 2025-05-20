@@ -82,13 +82,12 @@ public class VehicleMakeService : IVehicleMakeService
         {
             var existing = await _unitOfWork.VehicleMakes.GetByIdAsync(id);
             if (existing == null) return false;
-
-            existing.Name = dto.Name;
-            existing.Abrv = dto.Abrv;
-
+            
+            _mapper.Map(dto, existing);
+            
             await _unitOfWork.VehicleMakes.UpdateAsync(existing);
-            await _unitOfWork.SaveAsync();
-            return true;
+            var result = await _unitOfWork.SaveAsync();
+            return result > 0;
         }
 
         catch (Exception)
@@ -107,8 +106,8 @@ public class VehicleMakeService : IVehicleMakeService
             if (existing == null) return false;
 
             await _unitOfWork.VehicleMakes.DeleteAsync(id);
-            await _unitOfWork.SaveAsync();
-            return true;
+            var result = await _unitOfWork.SaveAsync();
+            return result > 0;
         }
 
         catch (Exception)

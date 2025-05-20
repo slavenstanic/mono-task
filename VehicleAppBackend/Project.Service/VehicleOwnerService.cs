@@ -77,8 +77,8 @@ public class VehicleOwnerService : IVehicleOwnerService
             _mapper.Map(dto, existing);
 
             await _unitOfWork.VehicleOwners.UpdateAsync(existing);
-            await _unitOfWork.SaveAsync();
-            return true;
+            var result = await _unitOfWork.SaveAsync();
+            return result > 0;
         }
         catch (Exception)
         {
@@ -94,8 +94,8 @@ public class VehicleOwnerService : IVehicleOwnerService
             if (existing == null) return false;
 
             await _unitOfWork.VehicleOwners.DeleteAsync(id);
-            await _unitOfWork.SaveAsync();
-            return true;
+            var result = await _unitOfWork.SaveAsync();
+            return result > 0;
         }
         catch (Exception)
         {
