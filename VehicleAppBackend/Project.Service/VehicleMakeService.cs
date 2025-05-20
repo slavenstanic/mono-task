@@ -32,6 +32,8 @@ public class VehicleMakeService : IVehicleMakeService
 
         catch (Exception)
         {
+            // ne znam koliko je ovo dobro (imam osjecaj da je noob rjesenje jer se za debugganje koriste breakpointi i "Debug" button, a ne console.logovi), ali ostavit cu ovdje samo zato sto je proizaslo iz moje glave, pa cu nakon code reviewa znati bolje 
+            Console.WriteLine("Greska prilikom dohvacanja (svih) podataka");
             throw;
         }
 
@@ -49,6 +51,7 @@ public class VehicleMakeService : IVehicleMakeService
 
         catch (Exception)
         {
+            Console.WriteLine("Greska prilikom dohvacanja (jednog) podatka");
             throw;
         }
 
@@ -67,6 +70,7 @@ public class VehicleMakeService : IVehicleMakeService
         
         catch (Exception)
         {
+            Console.WriteLine("Greska prilikom kreiranja");
             throw;
         }
     }
@@ -88,6 +92,7 @@ public class VehicleMakeService : IVehicleMakeService
 
         catch (Exception)
         {
+            Console.WriteLine("Greska prilikom azuriranja/updateanja podatka");
             throw;
         }
 
@@ -107,6 +112,7 @@ public class VehicleMakeService : IVehicleMakeService
 
         catch (Exception)
         {
+            Console.WriteLine("Greska prilikom brisanja podatka");
             throw;
         }
 
