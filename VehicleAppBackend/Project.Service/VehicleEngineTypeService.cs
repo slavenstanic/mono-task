@@ -1,3 +1,4 @@
+using AutoMapper;
 using Project.Model;
 using Project.Model.DTO;
 using Project.Repository.Common;
@@ -8,80 +9,46 @@ namespace Project.Service;
 public class VehicleEngineTypeService : IVehicleEngineTypeService
 {
     private readonly IUnitOfWork _unitOfWork;
-
-    // vidim kakvu sam glupost ovdje napravio, kasnije cu ovaj servis promijeniti u read-only te zato sad necu upravljat iznimkama
-    public VehicleEngineTypeService(IUnitOfWork unitOfWork)
+    private readonly IMapper _mapper;
+    
+    public VehicleEngineTypeService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<PagedList<VehicleEngineTypeDTO>> GetAllAsync(int page, int pageSize)
     {
-        var paged = await _unitOfWork.VehicleEngineTypes.GetFilteredPagedAsync(
-            null, q => q.OrderBy(x => x.Type), page, pageSize
-        );
+        try
+        {
+            var paged = await _unitOfWork.VehicleEngineTypes.GetFilteredPagedAsync(
+                null, q => q.OrderBy(x => x.Type), page, pageSize
+            );
 
-        return new PagedList<VehicleEngineTypeDTO>(
-            paged.Items.Select(x => new VehicleEngineTypeDTO
-            {
-                Id = x.Id,
-                Type = x.Type,
-                Abrv = x.Abrv
-            }).ToList(),
-            paged.TotalCount,
-            paged.PageNumber,
-            paged.PageSize
-        );
+            return new PagedList<VehicleEngineTypeDTO>(
+                _mapper.Map<List<VehicleEngineTypeDTO>>(paged.Items),
+                paged.TotalCount,
+                paged.PageNumber,
+                paged.PageSize
+            );
+        }
+
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<VehicleEngineTypeDTO?> GetByIdAsync(int id)
     {
-        var entity = await _unitOfWork.VehicleEngineTypes.GetByIdAsync(id);
-        if (entity == null) return null;
-
-        return new VehicleEngineTypeDTO
+        try
         {
-            Id = entity.Id,
-            Type = entity.Type,
-            Abrv = entity.Abrv
-        };
-    }
-
-    public async Task<VehicleEngineTypeDTO> CreateAsync(VehicleEngineTypeDTO dto)
-    {
-        var entity = new VehicleEngineType
+            var entity = await _unitOfWork.VehicleEngineTypes.GetByIdAsync(id);
+            return entity == null ? null : _mapper.Map<VehicleEngineTypeDTO>(entity);
+        }
+        catch (Exception)
         {
-            Type = dto.Type,
-            Abrv = dto.Abrv
-        };
-
-        await _unitOfWork.VehicleEngineTypes.InsertAsync(entity);
-        await _unitOfWork.SaveAsync();
-
-        dto.Id = entity.Id;
-        return dto;
-    }
-
-    public async Task<bool> UpdateAsync(int id, VehicleEngineTypeDTO dto)
-    {
-        var existing = await _unitOfWork.VehicleEngineTypes.GetByIdAsync(id);
-        if (existing == null) return false;
-
-        existing.Type = dto.Type;
-        existing.Abrv = dto.Abrv;
-
-        await _unitOfWork.VehicleEngineTypes.UpdateAsync(existing);
-        await _unitOfWork.SaveAsync();
-        return true;
-    }
-
-    public async Task<bool> DeleteAsync(int id)
-    {
-        var existing = await _unitOfWork.VehicleEngineTypes.GetByIdAsync(id);
-        if (existing == null) return false;
-
-        await _unitOfWork.VehicleEngineTypes.DeleteAsync(id);
-        await _unitOfWork.SaveAsync();
-        return true;
+            throw;
+        }
     }
 }
