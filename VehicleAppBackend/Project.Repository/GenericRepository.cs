@@ -45,24 +45,22 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     
     public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
-    public async Task<int> InsertAsync(T entity)
+    public async Task InsertAsync(T entity)
     {
         await _dbSet.AddAsync(entity);
-        return 1;
     }
     
-    public async Task<int> UpdateAsync(T entity)
+    public async Task UpdateAsync(T entity)
     {
         _dbSet.Attach(entity);
         _context.Entry(entity).State = EntityState.Modified;
-        return 1;
     }
     
-    public async Task<int> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
         var entity = await _dbSet.FindAsync(id);
-        if (entity == null) return 0;
+        if (entity == null) return false;
         _dbSet.Remove(entity);
-        return 1;
+        return true;
     }
 }

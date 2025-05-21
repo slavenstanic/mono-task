@@ -12,7 +12,7 @@ public interface IGenericRepository<T> where T : class
         int pageNumber = 1,
         int pageSize = 10);
     Task<T> GetByIdAsync(int id);
-    Task<int> InsertAsync(T entity);
-    Task<int> UpdateAsync(T entity);
-    Task<int> DeleteAsync(int id);
+    Task InsertAsync(T entity);
+    Task UpdateAsync(T entity);
+    Task<bool> DeleteAsync(int id);
 }
