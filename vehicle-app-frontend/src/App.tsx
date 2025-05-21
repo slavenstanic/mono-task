@@ -2,6 +2,7 @@ import { styled } from "@mui/material";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { VehicleMakeListPage } from "./pages/VehicleMakeListPage.tsx";
 import { VehicleMakeCreatePage } from "./pages/VehicleMakeCreatePage.tsx";
+import { VehicleMakeEditPage } from "./components/VehicleMakeEditPage.tsx";
 
 const Root = styled("div")(() => ({
   backgroundColor: "#00243D",
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/create" element={<VehicleMakeCreatePage />} />
           <Route path="/brands-list" element={<VehicleMakeListPage />} />
+          <Route path="/edit/:id" element={<VehicleMakeEditPage />} />
         </Routes>
       </Root>
     </BrowserRouter>

@@ -8,6 +8,11 @@ export const getVehicleMakes = async (page: number, pageSize: number) => {
   return response.data;
 };
 
+export const getVehicleMakeById = async (id: number) => {
+  const response = await API.get<VehicleMake>(`/vehiclemake/${id}`);
+  return response.data;
+};
+
 export const createVehicleMake = async (make: Omit<VehicleMake, "id">) => {
   const response = await API.post<VehicleMake>("/vehiclemake", make);
   return response.data;

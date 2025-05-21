@@ -1,13 +1,9 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Button, styled, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import vehicleListStore from "../stores/vehicleListStore";
-import vehicleEditStore from "../stores/vehicleEditStore";
-import {
-  deleteVehicleMake,
-  updateVehicleMake as updateVehicleMakeAPI,
-} from "../services/vehicleMakeService";
-import FormField from "./FormField";
+import { deleteVehicleMake } from "../services/vehicleMakeService";
 
 const Root = styled("div")(() => ({
   display: "flex",
@@ -26,12 +22,6 @@ const ListContainer = styled("div")(() => ({
   borderRadius: "0.5rem",
 }));
 
-const TextFieldContainer = styled("div")(() => ({
-  display: "flex",
-  gap: "1.5rem",
-  marginRight: "1rem",
-}));
-
 const ButtonContainer = styled("div")(() => ({
   display: "flex",
   gap: "0.5rem",
@@ -44,32 +34,13 @@ const PagingContainer = styled("div")(() => ({
 }));
 
 const VehicleMakeList = () => {
+  const navigate = useNavigate();
   const { vehicleMakes, page, totalPages, loading, setPage, loadVehicleMakes } =
     vehicleListStore;
 
-  const { form, editId, setForm, setFormValues, resetForm, setEditId } =
-    vehicleEditStore;
-
   useEffect(() => {
     loadVehicleMakes();
-  }, []);
-
-  const startEdit = (id: number, name: string, abrv: string) => {
-    setEditId(id);
-    setFormValues({ name, abrv });
-  };
-
-  const cancelEdit = () => {
-    resetForm();
-  };
-
-  const saveEdit = async () => {
-    if (editId !== null) {
-      await updateVehicleMakeAPI({ id: editId, ...form });
-      await loadVehicleMakes();
-      cancelEdit();
-    }
-  };
+  }, [page]);
 
   if (loading) return <p>Loading...</p>;
 
@@ -77,111 +48,56 @@ const VehicleMakeList = () => {
     <Root>
       {vehicleMakes.map((make) => (
         <ListContainer key={make.id}>
-          {editId === make.id ? (
-            <>
-              <TextFieldContainer>
-                <FormField
-                  name="name"
-                  value={form.name}
-                  onChange={(e) => setForm(e.target.name, e.target.value)}
-                />
-                <FormField
-                  name="abrv"
-                  value={form.abrv}
-                  onChange={(e) => setForm(e.target.name, e.target.value)}
-                />
-              </TextFieldContainer>
-              <ButtonContainer>
-                <Button
-                  sx={{
-                    backgroundColor: "#275B80",
-                    color: "#fff",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                    letterSpacing: "5%",
-                    lineHeight: "1rem",
-                    textTransform: "capitalize",
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: "0.5rem",
-                    "&:hover": { backgroundColor: "#5798C7" },
-                    "&:active": { backgroundColor: "#7DAFD3" },
-                  }}
-                  onClick={saveEdit}
-                >
-                  Save
-                </Button>
-                <Button
-                  sx={{
-                    backgroundColor: "#275B80",
-                    color: "#fff",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                    letterSpacing: "5%",
-                    lineHeight: "1rem",
-                    textTransform: "capitalize",
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: "0.5rem",
-                    "&:hover": { backgroundColor: "#5798C7" },
-                    "&:active": { backgroundColor: "#7DAFD3" },
-                  }}
-                  onClick={cancelEdit}
-                >
-                  Cancel
-                </Button>
-              </ButtonContainer>
-            </>
-          ) : (
-            <>
-              <Typography>
-                {make.name} - {make.abrv.toUpperCase()}
-              </Typography>
-              <ButtonContainer>
-                <Button
-                  sx={{
-                    backgroundColor: "#275B80",
-                    color: "#fff",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                    letterSpacing: "5%",
-                    lineHeight: "1rem",
-                    textTransform: "capitalize",
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: "0.5rem",
-                    "&:hover": { backgroundColor: "#5798C7" },
-                    "&:active": { backgroundColor: "#7DAFD3" },
-                  }}
-                  onClick={() => startEdit(make.id, make.name, make.abrv)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  sx={{
-                    backgroundColor: "#275B80",
-                    color: "#fff",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                    letterSpacing: "5%",
-                    lineHeight: "1rem",
-                    textTransform: "capitalize",
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: "0.5rem",
-                    "&:hover": { backgroundColor: "#5798C7" },
-                    "&:active": { backgroundColor: "#7DAFD3" },
-                  }}
-                  onClick={async () => {
-                    await deleteVehicleMake(make.id);
-                    loadVehicleMakes();
-                  }}
-                >
-                  Delete
-                </Button>
-              </ButtonContainer>
-            </>
-          )}
+          <Typography>
+            {make.name} - {make.abrv.toUpperCase()}
+          </Typography>
+          <ButtonContainer>
+            <Button
+              sx={{
+                backgroundColor: "#275B80",
+                color: "#fff",
+                fontSize: "0.75rem",
+                fontWeight: "500",
+                letterSpacing: "5%",
+                lineHeight: "1rem",
+                textTransform: "capitalize",
+                padding: "0.5rem 0.75rem",
+                borderRadius: "0.5rem",
+                "&:hover": { backgroundColor: "#5798C7" },
+                "&:active": { backgroundColor: "#7DAFD3" },
+              }}
+              onClick={() => navigate(`/edit/${make.id}`)}
+            >
+              Edit
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: "#275B80",
+                color: "#fff",
+                fontSize: "0.75rem",
+                fontWeight: "500",
+                letterSpacing: "5%",
+                lineHeight: "1rem",
+                textTransform: "capitalize",
+                padding: "0.5rem 0.75rem",
+                borderRadius: "0.5rem",
+                "&:hover": { backgroundColor: "#5798C7" },
+                "&:active": { backgroundColor: "#7DAFD3" },
+              }}
+              onClick={async () => {
+                await deleteVehicleMake(make.id);
+                await loadVehicleMakes();
+              }}
+            >
+              Delete
+            </Button>
+          </ButtonContainer>
         </ListContainer>
       ))}
       <PagingContainer style={{ marginTop: "1rem" }}>
         <Button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
           sx={{
             backgroundColor: "#275B80",
             color: "#fff",
@@ -199,8 +115,6 @@ const VehicleMakeList = () => {
               color: "rgba(255, 255, 255, 0.3)",
             },
           }}
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
         >
           Previous
         </Button>
@@ -208,6 +122,8 @@ const VehicleMakeList = () => {
           {totalPages === 0 ? "Page 0 of 0" : `Page ${page} of ${totalPages}`}
         </Typography>
         <Button
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages || totalPages === 0}
           sx={{
             backgroundColor: "#275B80",
             color: "#fff",
@@ -225,8 +141,6 @@ const VehicleMakeList = () => {
               color: "rgba(255, 255, 255, 0.3)",
             },
           }}
-          onClick={() => setPage(page + 1)}
-          disabled={page === totalPages || totalPages === 0}
         >
           Next
         </Button>
