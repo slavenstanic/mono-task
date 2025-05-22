@@ -2,12 +2,20 @@ using Microsoft.EntityFrameworkCore;
 using Project.DAL;
 using Project.Repository;
 using Project.Repository.Common;
+using Project.Service;
+using Project.Service.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(MappingProfile)); // --> https://stackoverflow.com/questions/78025475/asp-net-core-automapper-how-to-resolve-errorcs0121-the-call-is-ambiguous-betwe
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
+builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
+builder.Services.AddScoped<IVehicleEngineTypeService, VehicleEngineTypeService>();
+builder.Services.AddScoped<IVehicleOwnerService, VehicleOwnerService>();
+builder.Services.AddScoped<IVehicleRegistrationService, VehicleRegistrationService>();
 builder.Services.AddDbContext<ProjectDbContext>(options =>
     options.UseSqlite("Data Source=project.db"));
 

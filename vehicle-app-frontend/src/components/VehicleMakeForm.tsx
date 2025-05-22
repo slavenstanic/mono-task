@@ -1,7 +1,8 @@
-import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import vehicleMakeStore from "../stores/vehicleMakeStore";
 import { Button, styled, TextField, Typography } from "@mui/material";
+import { createVehicleMake } from "../services/vehicleMakeService";
+import vehicleListStore from "../stores/vehicleListStore";
+import vehicleFormStore from "../stores/vehicleFormStore.ts";
 
 const Root = styled("div")(() => ({
   display: "flex",
@@ -16,17 +17,14 @@ const InputContainer = styled("div")(() => ({
 }));
 
 const VehicleMakeForm = () => {
-  const [form, setForm] = useState({ name: "", abrv: "" });
+  const store = vehicleFormStore;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.name && form.abrv) {
-      vehicleMakeStore.createVehicleMake(form);
-      setForm({ name: "", abrv: "" });
+    if (store.isValid) {
+      await createVehicleMake({ name: store.name, abrv: store.abrv });
+      await vehicleListStore.loadVehicleMakes();
+      store.reset();
     }
   };
 
@@ -45,6 +43,10 @@ const VehicleMakeForm = () => {
       <form onSubmit={handleSubmit}>
         <InputContainer>
           <TextField
+            name="name"
+            value={store.name}
+            onChange={(e) => store.setField("name", e.target.value)}
+            placeholder="Name:"
             sx={{
               borderRadius: "0.25rem",
               width: "100%",
@@ -55,19 +57,17 @@ const VehicleMakeForm = () => {
                 fontSize: "0.875rem",
                 lineHeight: "1.125rem",
               },
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
+              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
               "&:focus-within .MuiOutlinedInput-notchedOutline": {
                 border: "2px solid #5798C7",
               },
             }}
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Name:"
           />
           <TextField
+            name="abrv"
+            value={store.abrv}
+            onChange={(e) => store.setField("abrv", e.target.value)}
+            placeholder="Abbreviation:"
             sx={{
               borderRadius: "0.25rem",
               width: "100%",
@@ -78,19 +78,15 @@ const VehicleMakeForm = () => {
                 fontSize: "0.875rem",
                 lineHeight: "1.125rem",
               },
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
+              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
               "&:focus-within .MuiOutlinedInput-notchedOutline": {
                 border: "2px solid #5798C7",
               },
             }}
-            name="abrv"
-            value={form.abrv}
-            onChange={handleChange}
-            placeholder="Abbreviation:"
           />
           <Button
+            type="submit"
+            disabled={!store.isValid}
             sx={{
               width: "12.5rem",
               backgroundColor: "#275B80",
@@ -102,19 +98,13 @@ const VehicleMakeForm = () => {
               textTransform: "capitalize",
               padding: "0.5rem 0.75rem",
               borderRadius: "0.5rem",
-              "&:hover": {
-                backgroundColor: "#5798C7",
-              },
-              "&:active": {
-                backgroundColor: "#7DAFD3",
-              },
+              "&:hover": { backgroundColor: "#5798C7" },
+              "&:active": { backgroundColor: "#7DAFD3" },
               "&.Mui-disabled": {
                 backgroundColor: "rgba(39, 91, 128, 0.3)",
                 color: "rgba(255, 255, 255, 0.3)",
               },
             }}
-            type="submit"
-            disabled={!form.name.trim() || !form.abrv.trim()}
           >
             Add Vehicle
           </Button>

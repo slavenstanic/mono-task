@@ -20,45 +20,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     
     public async Task<List<T>> GetAllAsync() => await _dbSet.ToListAsync();
     
-    public async Task<PagedList<T>> GetPagedAsync(int pageNumber, int pageSize)
-    {
-        var totalCount = await _dbSet.CountAsync();
-
-        var items = await _dbSet
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PagedList<T>(items, totalCount, pageNumber, pageSize);
-    }
-    
-    public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
-
-    public async Task<int> InsertAsync(T entity)
-    {
-        await _dbSet.AddAsync(entity);
-        return await _context.SaveChangesAsync();
-    }
-    
-    public async Task<int> UpdateAsync(T entity)
-    {
-        _dbSet.Attach(entity);
-        _context.Entry(entity).State = EntityState.Modified;
-        return 1;
-    }
-    
-    public async Task<int> DeleteAsync(int id)
-    {
-        var entity = await _dbSet.FindAsync(id);
-        if (entity == null) return 0;
-        _dbSet.Remove(entity);
-        return 1;
-    }
-    
-    public async Task<List<T>> GetFilteredAsync(
+    public async Task<PagedList<T>> GetFilteredPagedAsync(
         Expression<Func<T, bool>>? filter = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
-    )
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        int pageNumber = 1,
+        int pageSize = 10)
     {
         IQueryable<T> query = _dbSet;
 
@@ -68,6 +34,33 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         if (orderBy != null)
             query = orderBy(query);
 
-        return await query.ToListAsync();
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedList<T>(items, totalCount, pageNumber, pageSize);
+    }
+    
+    public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+
+    public async Task InsertAsync(T entity)
+    {
+        await _dbSet.AddAsync(entity);
+    }
+    
+    public async Task UpdateAsync(T entity)
+    {
+        _dbSet.Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
+    }
+    
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var entity = await _dbSet.FindAsync(id);
+        if (entity == null) return false;
+        _dbSet.Remove(entity);
+        return true;
     }
 }

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Project.Model.DTO\Project.Model.DTO.csproj" />
+      <ProjectReference Include="..\Project.Model\Project.Model.csproj" />
+      <ProjectReference Include="..\Project.Repository.Common\Project.Repository.Common.csproj" />
+      <ProjectReference Include="..\Project.Service.Common\Project.Service.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="14.0.0" />
+    </ItemGroup>
+
+</Project>
