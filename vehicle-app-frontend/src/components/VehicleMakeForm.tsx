@@ -17,14 +17,14 @@ const InputContainer = styled("div")(() => ({
 }));
 
 const VehicleMakeForm = () => {
-  const { name, abrv, setField, reset, isValid } = vehicleFormStore;
+  const store = vehicleFormStore;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isValid) {
-      await createVehicleMake({ name, abrv });
+    if (store.isValid) {
+      await createVehicleMake({ name: store.name, abrv: store.abrv });
       await vehicleListStore.loadVehicleMakes();
-      reset();
+      store.reset();
     }
   };
 
@@ -44,8 +44,8 @@ const VehicleMakeForm = () => {
         <InputContainer>
           <TextField
             name="name"
-            value={name}
-            onChange={(e) => setField("name", e.target.value)}
+            value={store.name}
+            onChange={(e) => store.setField("name", e.target.value)}
             placeholder="Name:"
             sx={{
               borderRadius: "0.25rem",
@@ -65,8 +65,8 @@ const VehicleMakeForm = () => {
           />
           <TextField
             name="abrv"
-            value={abrv}
-            onChange={(e) => setField("abrv", e.target.value)}
+            value={store.abrv}
+            onChange={(e) => store.setField("abrv", e.target.value)}
             placeholder="Abbreviation:"
             sx={{
               borderRadius: "0.25rem",
@@ -86,7 +86,7 @@ const VehicleMakeForm = () => {
           />
           <Button
             type="submit"
-            disabled={!isValid}
+            disabled={!store.isValid}
             sx={{
               width: "12.5rem",
               backgroundColor: "#275B80",
