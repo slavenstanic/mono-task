@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Button, styled, TextField, Typography } from "@mui/material";
 import { createVehicleMake } from "../services/vehicleMakeService";
 import vehicleListStore from "../stores/vehicleListStore";
+import vehicleFormStore from "../stores/vehicleFormStore.ts";
 
 const Root = styled("div")(() => ({
   display: "flex",
@@ -17,18 +17,14 @@ const InputContainer = styled("div")(() => ({
 }));
 
 const VehicleMakeForm = () => {
-  const [form, setForm] = useState({ name: "", abrv: "" });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const { name, abrv, setField, reset, isValid } = vehicleFormStore;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.name && form.abrv) {
-      await createVehicleMake({ name: form.name, abrv: form.abrv });
+    if (isValid) {
+      await createVehicleMake({ name, abrv });
       await vehicleListStore.loadVehicleMakes();
-      setForm({ name: "", abrv: "" });
+      reset();
     }
   };
 
@@ -48,8 +44,8 @@ const VehicleMakeForm = () => {
         <InputContainer>
           <TextField
             name="name"
-            value={form.name}
-            onChange={handleChange}
+            value={name}
+            onChange={(e) => setField("name", e.target.value)}
             placeholder="Name:"
             sx={{
               borderRadius: "0.25rem",
@@ -69,8 +65,8 @@ const VehicleMakeForm = () => {
           />
           <TextField
             name="abrv"
-            value={form.abrv}
-            onChange={handleChange}
+            value={abrv}
+            onChange={(e) => setField("abrv", e.target.value)}
             placeholder="Abbreviation:"
             sx={{
               borderRadius: "0.25rem",
@@ -90,7 +86,7 @@ const VehicleMakeForm = () => {
           />
           <Button
             type="submit"
-            disabled={!form.name.trim() || !form.abrv.trim()}
+            disabled={!isValid}
             sx={{
               width: "12.5rem",
               backgroundColor: "#275B80",
