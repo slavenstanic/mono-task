@@ -19,14 +19,14 @@ export function VehicleMakeEditPage() {
   const [form, setForm] = useState({ name: "", abrv: "" });
 
   useEffect(() => {
-    async function load() {
+    const load = async () => {
       if (id) {
         const data = await getVehicleMakeById(parseInt(id));
         if (data) {
           setForm({ name: data.name, abrv: data.abrv });
         }
       }
-    }
+    };
     load();
   }, [id]);
 
